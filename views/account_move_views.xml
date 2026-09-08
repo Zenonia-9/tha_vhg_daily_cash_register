@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_journal_form_cash_register" model="ir.ui.view">
+        <field name="name">account.journal.form.cash.register</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+            <field name="currency_id" position="after">
+                <field name="cash_register_currency_slot"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_move_line_form_cash_register" model="ir.ui.view">
+        <field name="name">account.move.line.form.cash.register</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_form"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="cash_register_particulars"/>
+            </field>
+        </field>
+    </record>
+</odoo>

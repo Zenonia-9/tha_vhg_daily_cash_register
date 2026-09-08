@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vhg_dcr_invoice,vhg.daily.cash.register.invoice,model_vhg_daily_cash_register,account.group_account_invoice,1,1,1,0
+access_vhg_dcr_manager,vhg.daily.cash.register.manager,model_vhg_daily_cash_register,account.group_account_manager,1,1,1,1
+access_vhg_dcr_line_invoice,vhg.daily.cash.register.line.invoice,model_vhg_daily_cash_register_line,account.group_account_invoice,1,1,1,1
+access_vhg_dcr_denom_invoice,vhg.daily.cash.register.denom.invoice,model_vhg_daily_cash_register_denom,account.group_account_invoice,1,1,1,1

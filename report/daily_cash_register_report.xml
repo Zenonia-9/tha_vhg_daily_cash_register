@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_vhg_daily_cash_register" model="report.paperformat">
+        <field name="name">Daily Cash Register A4</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">8</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">8</field>
+        <field name="margin_right">8</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_vhg_daily_cash_register" model="ir.actions.report">
+        <field name="name">Daily Cash Register</field>
+        <field name="model">vhg.daily.cash.register</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">tha_vhg_daily_cash_register.report_vhg_daily_cash_register</field>
+        <field name="report_file">tha_vhg_daily_cash_register.report_vhg_daily_cash_register</field>
+        <field name="print_report_name">'Daily Cash Register - %s' % (object.date)</field>
+        <field name="paperformat_id" ref="tha_vhg_daily_cash_register.paperformat_vhg_daily_cash_register"/>
+        <field name="binding_model_id" ref="model_vhg_daily_cash_register"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

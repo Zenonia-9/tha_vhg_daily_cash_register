@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_vhg_daily_cash_register_list" model="ir.ui.view">
+        <field name="name">vhg.daily.cash.register.list</field>
+        <field name="model">vhg.daily.cash.register</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="opening_kyats"/>
+                <field name="receipt_kyats"/>
+                <field name="payment_kyats"/>
+                <field name="closing_kyats"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'confirmed'"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_vhg_daily_cash_register_form" model="ir.ui.view">
+        <field name="name">vhg.daily.cash.register.form</field>
+        <field name="model">vhg.daily.cash.register</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_load_accounting" type="object" string="Load from Accounting" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_confirm" type="object" string="Confirm" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_draft" type="object" string="Reset to Draft" invisible="state != 'confirmed'" groups="account.group_account_manager"/>
+                    <button name="action_print" type="object" string="Print"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert" invisible="not denom_mismatch">
+                        Counted notes (<field name="denom_total_kyats" readonly="1"/>) do not match book closing
+                        (<field name="closing_kyats" readonly="1"/>). Confirm is still allowed — this is a physical count check.
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="journal_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Book balances">
+                        <group string="Opening">
+                            <field name="opening_kyats" readonly="1"/>
+                            <field name="opening_sgd" readonly="1"/>
+                            <field name="opening_baht" readonly="1"/>
+                            <field name="opening_usd" readonly="1"/>
+                        </group>
+                        <group string="Closing">
+                            <field name="closing_kyats" readonly="1"/>
+                            <field name="closing_sgd" readonly="1"/>
+                            <field name="closing_baht" readonly="1"/>
+                            <field name="closing_usd" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Receipts" name="receipts">
+                            <field name="receipt_line_ids" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="sequence" string="No"/>
+                                    <field name="dept"/>
+                                    <field name="particulars"/>
+                                    <field name="amount_kyats" sum="Total"/>
+                                    <field name="amount_sgd" sum="Total"/>
+                                    <field name="amount_baht" sum="Total"/>
+                                    <field name="amount_usd" sum="Total"/>
+                                    <field name="move_line_id" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Payments" name="payments">
+                            <field name="payment_line_ids" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="sequence" string="No"/>
+                                    <field name="dept"/>
+                                    <field name="particulars"/>
+                                    <field name="amount_kyats" sum="Total"/>
+                                    <field name="amount_sgd" sum="Total"/>
+                                    <field name="amount_baht" sum="Total"/>
+                                    <field name="amount_usd" sum="Total"/>
+                                    <field name="move_line_id" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Denominations" name="denoms">
+                            <div class="mb-2">
+                                Enter physical note counts. Amount for 10,000–1 is face × Qty. Small note is a free amount.
+                                <button name="action_reset_denominations" type="object" string="Reset rows" class="btn-link" invisible="state != 'draft'"/>
+                            </div>
+                            <field name="denom_line_ids" readonly="state != 'draft'">
+                                <list editable="bottom" create="false" delete="false">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="code" column_invisible="1"/>
+                                    <field name="face_value" column_invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="amount" sum="Sum Total"/>
+                                    <field name="qty_mmk" sum="Qty"/>
+                                    <field name="qty_2" sum="Qty"/>
+                                    <field name="qty_3" sum="Qty"/>
+                                </list>
+                            </field>
+                            <group>
+                                <field name="denom_total_kyats"/>
+                                <field name="denom_mismatch" invisible="1"/>
+                            </group>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes" placeholder="Checked / prepared remarks"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_vhg_daily_cash_register_search" model="ir.ui.view">
+        <field name="name">vhg.daily.cash.register.search</field>
+        <field name="model">vhg.daily.cash.register</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="date"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <group>
+                    <filter name="groupby_date" string="Date" context="{'group_by': 'date'}"/>
+                    <filter name="groupby_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_vhg_daily_cash_register" model="ir.actions.act_window">
+        <field name="name">Daily Cash Register</field>
+        <field name="res_model">vhg.daily.cash.register</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_vhg_daily_cash_register"
+        name="Daily Cash Register"
+        parent="account.menu_finance_reports"
+        action="action_vhg_daily_cash_register"
+        sequence="40"
+    />
+</odoo>

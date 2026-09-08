@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_vhg_daily_cash_register">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <div class="page" style="font-size: 11px;">
+                        <style>
+                            .dcr-table { width: 100%; border-collapse: collapse; }
+                            .dcr-table th, .dcr-table td { border: 1px solid #000; padding: 3px 4px; }
+                            .dcr-table th { text-align: center; font-weight: bold; }
+                            .num { text-align: right; white-space: nowrap; }
+                            .ctr { text-align: center; }
+                            .bold { font-weight: bold; }
+                            .sign { margin-top: 28px; }
+                        </style>
+                        <h4 class="text-center mb-0"><t t-esc="doc.company_id.name"/></h4>
+                        <h5 class="text-center mb-1">Daily Cash Register</h5>
+                        <p class="text-end mb-1">
+                            <t t-esc="doc.date" t-options="{'widget': 'date'}"/>
+                        </p>
+                        <table class="dcr-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 4%;">No</th>
+                                    <th rowspan="2" style="width: 12%;">Dept</th>
+                                    <th rowspan="2">Particulars</th>
+                                    <th colspan="4">Amount</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 14%;">Kyats</th>
+                                    <th style="width: 8%;">SGD</th>
+                                    <th style="width: 8%;">Baht</th>
+                                    <th style="width: 8%;">USD</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td/>
+                                    <td/>
+                                    <td class="bold">Opening Cash balance</td>
+                                    <td class="num"><span t-field="doc.opening_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.opening_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.opening_baht" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.opening_usd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                </tr>
+                                <tr t-foreach="doc.receipt_line_ids" t-as="line">
+                                    <td class="ctr"><t t-esc="line.sequence"/></td>
+                                    <td><t t-esc="line.dept"/></td>
+                                    <td><t t-esc="line.particulars"/></td>
+                                    <td class="num"><span t-field="line.amount_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="line.amount_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="line.amount_baht" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="line.amount_usd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                </tr>
+                                <tr class="bold">
+                                    <td/>
+                                    <td/>
+                                    <td>Total Cash Receipts</td>
+                                    <td class="num"><span t-field="doc.receipt_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.receipt_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.receipt_baht" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.receipt_usd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                </tr>
+                                <tr t-foreach="doc.payment_line_ids" t-as="line">
+                                    <td class="ctr"><t t-esc="line.sequence"/></td>
+                                    <td><t t-esc="line.dept"/></td>
+                                    <td><t t-esc="line.particulars"/></td>
+                                    <td class="num"><span t-field="line.amount_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="line.amount_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="line.amount_baht" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="line.amount_usd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                </tr>
+                                <tr class="bold">
+                                    <td/>
+                                    <td/>
+                                    <td>Total Cash Payment</td>
+                                    <td class="num"><span t-field="doc.payment_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.payment_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.payment_baht" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.payment_usd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                </tr>
+                                <tr class="bold">
+                                    <td/>
+                                    <td/>
+                                    <td>Closing Cash balance</td>
+                                    <td class="num"><span t-field="doc.closing_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.closing_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.closing_baht" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.closing_usd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h6 class="mt-3">Cash Denomination</h6>
+                        <table class="dcr-table" style="width: 70%;">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Qty</th>
+                                    <th>Qty</th>
+                                    <th>Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.denom_line_ids" t-as="dline">
+                                    <td class="ctr"><t t-esc="dline.sequence"/></td>
+                                    <td><t t-esc="dline.name"/></td>
+                                    <td class="num"><span t-field="dline.amount" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><t t-esc="dline.qty_mmk or ''"/></td>
+                                    <td class="num"><t t-esc="dline.qty_2 or ''"/></td>
+                                    <td class="num"><t t-esc="dline.qty_3 or ''"/></td>
+                                </tr>
+                                <tr class="bold">
+                                    <td colspan="2">Sum Total</td>
+                                    <td class="num"><span t-field="doc.denom_total_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><t t-esc="doc.denom_qty_mmk"/></td>
+                                    <td class="num"><t t-esc="doc.denom_qty_2"/></td>
+                                    <td class="num"><t t-esc="doc.denom_qty_3"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="sign" style="width: 100%;">
+                            <tr>
+                                <td style="width: 33%;">Confirmed by;<br/><br/><br/>Other Department</td>
+                                <td style="width: 33%;">Checked By;<br/><br/><br/>DCA/ACA</td>
+                                <td style="width: 34%;">Prepared by:<br/><br/><br/>Chief Cashier/Asst; Chief Cashier</td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
