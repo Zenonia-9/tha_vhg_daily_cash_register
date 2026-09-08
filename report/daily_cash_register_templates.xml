@@ -16,9 +16,13 @@
                         </style>
                         <h4 class="text-center mb-0"><t t-esc="doc.company_id.name"/></h4>
                         <h5 class="text-center mb-1">Daily Cash Register</h5>
-                        <p class="text-end mb-1">
-                            <t t-esc="doc.date.strftime('%-d-%b-%y')"/>
-                        </p>
+                        <table style="width: 100%; margin-bottom: 4px;">
+                            <tr>
+                                <td style="width: 50%;"></td>
+                                <td class="num" style="width: 25%;"><t t-esc="doc.date.strftime('%-d-%b-%y')"/></td>
+                                <td class="num" style="width: 25%;"><t t-esc="doc.date.strftime('%-d-%b-%y')"/></td>
+                            </tr>
+                        </table>
                         <table class="dcr-table">
                             <thead>
                                 <tr>
@@ -83,15 +87,6 @@
                                 <tr class="bold">
                                     <td/>
                                     <td/>
-                                    <td>Current Cash movement</td>
-                                    <td class="num"><span t-field="doc.current_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
-                                    <td class="num"><span t-field="doc.current_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
-                                    <td class="num"><span t-field="doc.current_baht" t-options="{'widget': 'float', 'precision': 0}"/></td>
-                                    <td class="num"><span t-field="doc.current_usd" t-options="{'widget': 'float', 'precision': 0}"/></td>
-                                </tr>
-                                <tr class="bold">
-                                    <td/>
-                                    <td/>
                                     <td>Closing Cash balance</td>
                                     <td class="num"><span t-field="doc.closing_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
                                     <td class="num"><span t-field="doc.closing_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
@@ -101,7 +96,7 @@
                             </tbody>
                         </table>
 
-                        <h6 class="mt-3">Cash Denomination</h6>
+                        <h6 class="mt-3"><u>No</u> <u>Cash Denomination</u></h6>
                         <table class="dcr-table" style="width: 70%;">
                             <thead>
                                 <tr>
@@ -111,6 +106,7 @@
                                     <th>Qty (MMK)</th>
                                     <th>Qty (SGD)</th>
                                     <th>Qty (Baht)</th>
+                                    <th>Qty (USD)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -121,6 +117,7 @@
                                     <td class="num"><t t-esc="dline.qty_mmk or ''"/></td>
                                     <td class="num"><t t-esc="dline.qty_sgd or ''"/></td>
                                     <td class="num"><t t-esc="dline.qty_baht or ''"/></td>
+                                    <td class="num"><t t-esc="dline.qty_usd or ''"/></td>
                                 </tr>
                                 <tr class="bold">
                                     <td colspan="2">Sum Total</td>
@@ -128,6 +125,7 @@
                                     <td class="num"><t t-esc="doc.denom_qty_mmk"/></td>
                                     <td class="num"><t t-esc="doc.denom_qty_sgd"/></td>
                                     <td class="num"><t t-esc="doc.denom_qty_baht"/></td>
+                                    <td class="num"><t t-esc="doc.denom_qty_usd"/></td>
                                 </tr>
                             </tbody>
                         </table>

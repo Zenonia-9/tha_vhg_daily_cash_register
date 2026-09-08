@@ -112,6 +112,7 @@
                                     <field name="qty_mmk" string="Qty MMK" sum="Qty"/>
                                     <field name="qty_sgd" string="Qty SGD" sum="Qty"/>
                                     <field name="qty_baht" string="Qty Baht" sum="Qty"/>
+                                    <field name="qty_usd" string="Qty USD" sum="Qty"/>
                                 </list>
                             </field>
                             <group>

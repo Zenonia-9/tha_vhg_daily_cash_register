@@ -156,6 +156,7 @@ class VhgDailyCashRegister(models.Model):
     denom_qty_mmk = fields.Integer(compute="_compute_denom_totals", store=True)
     denom_qty_sgd = fields.Integer(compute="_compute_denom_totals", store=True)
     denom_qty_baht = fields.Integer(compute="_compute_denom_totals", store=True)
+    denom_qty_usd = fields.Integer(compute="_compute_denom_totals", store=True)
     denom_mismatch = fields.Boolean(compute="_compute_denom_totals", store=True)
 
     _date_company_unique = models.Constraint(
@@ -239,6 +240,7 @@ class VhgDailyCashRegister(models.Model):
         "denom_line_ids.qty_mmk",
         "denom_line_ids.qty_sgd",
         "denom_line_ids.qty_baht",
+        "denom_line_ids.qty_usd",
         "closing_kyats",
     )
     def _compute_denom_totals(self):
@@ -252,6 +254,7 @@ class VhgDailyCashRegister(models.Model):
             rec.denom_qty_mmk = sum(rec.denom_line_ids.mapped("qty_mmk"))
             rec.denom_qty_sgd = sum(rec.denom_line_ids.mapped("qty_sgd"))
             rec.denom_qty_baht = sum(rec.denom_line_ids.mapped("qty_baht"))
+            rec.denom_qty_usd = sum(rec.denom_line_ids.mapped("qty_usd"))
             rec.denom_mismatch = bool(
                 rec.denom_line_ids
                 and rec.currency_id.compare_amounts(rec.denom_total_kyats, rec.closing_kyats)
@@ -498,9 +501,9 @@ class VhgDailyCashRegisterLine(models.Model):
     dept = fields.Char(string="Dept")
     particulars = fields.Char(string="Particulars")
     amount_kyats = fields.Monetary(string="Amount Kyats", currency_field="currency_id")
-    amount_sgd = fields.Float(digits=(16, 2))
-    amount_baht = fields.Float(digits=(16, 2))
-    amount_usd = fields.Float(digits=(16, 2))
+    amount_sgd = fields.Float(string="Amount SGD", digits=(16, 2))
+    amount_baht = fields.Float(string="Amount Baht", digits=(16, 2))
+    amount_usd = fields.Float(string="Amount USD", digits=(16, 2))
     move_line_id = fields.Many2one("account.move.line", ondelete="set null")
     analytic_account_names = fields.Char(string="Analytic")
 
@@ -524,12 +527,13 @@ class VhgDailyCashRegisterDenom(models.Model):
     # Kyat amount = face_value × qty_mmk (auto-computed below).
     amount = fields.Monetary(currency_field="currency_id")
 
-    # Three qty columns, one per counted currency: MMK, SGD, Baht.
-    # USD is tracked numerically on the register (closing_usd) but not
-    # counted by physical note denominations.
+    # One qty column per counted currency: MMK, SGD, Baht, USD.
+    # Each row's `amount` is always face_value × qty_mmk (Kyat count is
+    # the only one used to compute the counted total).
     qty_mmk = fields.Integer(string="Qty (MMK)")
     qty_sgd = fields.Integer(string="Qty (SGD)")
     qty_baht = fields.Integer(string="Qty (Baht)")
+    qty_usd = fields.Integer(string="Qty (USD)")
 
     @api.onchange("qty_mmk", "face_value")
     def _onchange_qty_amount(self):
