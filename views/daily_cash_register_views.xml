@@ -50,16 +50,22 @@
                     </group>
                     <group string="Book balances">
                         <group string="Opening">
-                            <field name="opening_kyats" readonly="1"/>
-                            <field name="opening_sgd" readonly="1"/>
-                            <field name="opening_baht" readonly="1"/>
-                            <field name="opening_usd" readonly="1"/>
+                            <field name="opening_kyats" string="Opening Kyats" readonly="1"/>
+                            <field name="opening_sgd" string="Opening SGD" readonly="1"/>
+                            <field name="opening_baht" string="Opening Baht" readonly="1"/>
+                            <field name="opening_usd" string="Opening USD" readonly="1"/>
+                        </group>
+                        <group string="Current">
+                            <field name="current_kyats" string="Current Kyats" readonly="1"/>
+                            <field name="current_sgd" string="Current SGD" readonly="1"/>
+                            <field name="current_baht" string="Current Baht" readonly="1"/>
+                            <field name="current_usd" string="Current USD" readonly="1"/>
                         </group>
                         <group string="Closing">
-                            <field name="closing_kyats" readonly="1"/>
-                            <field name="closing_sgd" readonly="1"/>
-                            <field name="closing_baht" readonly="1"/>
-                            <field name="closing_usd" readonly="1"/>
+                            <field name="closing_kyats" string="Closing Kyats" readonly="1"/>
+                            <field name="closing_sgd" string="Closing SGD" readonly="1"/>
+                            <field name="closing_baht" string="Closing Baht" readonly="1"/>
+                            <field name="closing_usd" string="Closing USD" readonly="1"/>
                         </group>
                     </group>
                     <notebook>
@@ -102,10 +108,10 @@
                                     <field name="code" column_invisible="1"/>
                                     <field name="face_value" column_invisible="1"/>
                                     <field name="name"/>
-                                    <field name="amount" sum="Sum Total"/>
-                                    <field name="qty_mmk" sum="Qty"/>
-                                    <field name="qty_2" sum="Qty"/>
-                                    <field name="qty_3" sum="Qty"/>
+                                    <field name="amount" sum="Sum Total" readonly="1"/>
+                                    <field name="qty_mmk" string="Qty MMK" sum="Qty"/>
+                                    <field name="qty_sgd" string="Qty SGD" sum="Qty"/>
+                                    <field name="qty_baht" string="Qty Baht" sum="Qty"/>
                                 </list>
                             </field>
                             <group>

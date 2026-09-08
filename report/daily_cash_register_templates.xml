@@ -17,7 +17,7 @@
                         <h4 class="text-center mb-0"><t t-esc="doc.company_id.name"/></h4>
                         <h5 class="text-center mb-1">Daily Cash Register</h5>
                         <p class="text-end mb-1">
-                            <t t-esc="doc.date" t-options="{'widget': 'date'}"/>
+                            <t t-esc="doc.date.strftime('%-d-%b-%y')"/>
                         </p>
                         <table class="dcr-table">
                             <thead>
@@ -35,10 +35,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr class="bold">
                                     <td/>
                                     <td/>
-                                    <td class="bold">Opening Cash balance</td>
+                                    <td>Opening Cash balance</td>
                                     <td class="num"><span t-field="doc.opening_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
                                     <td class="num"><span t-field="doc.opening_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
                                     <td class="num"><span t-field="doc.opening_baht" t-options="{'widget': 'float', 'precision': 0}"/></td>
@@ -83,6 +83,15 @@
                                 <tr class="bold">
                                     <td/>
                                     <td/>
+                                    <td>Current Cash movement</td>
+                                    <td class="num"><span t-field="doc.current_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.current_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.current_baht" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                    <td class="num"><span t-field="doc.current_usd" t-options="{'widget': 'float', 'precision': 0}"/></td>
+                                </tr>
+                                <tr class="bold">
+                                    <td/>
+                                    <td/>
                                     <td>Closing Cash balance</td>
                                     <td class="num"><span t-field="doc.closing_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
                                     <td class="num"><span t-field="doc.closing_sgd" t-options="{'widget': 'float', 'precision': 0}"/></td>
@@ -99,9 +108,9 @@
                                     <th>No</th>
                                     <th>Type</th>
                                     <th>Amount</th>
-                                    <th>Qty</th>
-                                    <th>Qty</th>
-                                    <th>Qty</th>
+                                    <th>Qty (MMK)</th>
+                                    <th>Qty (SGD)</th>
+                                    <th>Qty (Baht)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -110,15 +119,15 @@
                                     <td><t t-esc="dline.name"/></td>
                                     <td class="num"><span t-field="dline.amount" t-options="{'widget': 'float', 'precision': 0}"/></td>
                                     <td class="num"><t t-esc="dline.qty_mmk or ''"/></td>
-                                    <td class="num"><t t-esc="dline.qty_2 or ''"/></td>
-                                    <td class="num"><t t-esc="dline.qty_3 or ''"/></td>
+                                    <td class="num"><t t-esc="dline.qty_sgd or ''"/></td>
+                                    <td class="num"><t t-esc="dline.qty_baht or ''"/></td>
                                 </tr>
                                 <tr class="bold">
                                     <td colspan="2">Sum Total</td>
                                     <td class="num"><span t-field="doc.denom_total_kyats" t-options="{'widget': 'float', 'precision': 0}"/></td>
                                     <td class="num"><t t-esc="doc.denom_qty_mmk"/></td>
-                                    <td class="num"><t t-esc="doc.denom_qty_2"/></td>
-                                    <td class="num"><t t-esc="doc.denom_qty_3"/></td>
+                                    <td class="num"><t t-esc="doc.denom_qty_sgd"/></td>
+                                    <td class="num"><t t-esc="doc.denom_qty_baht"/></td>
                                 </tr>
                             </tbody>
                         </table>
