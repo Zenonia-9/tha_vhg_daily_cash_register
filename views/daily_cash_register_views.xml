@@ -48,7 +48,7 @@
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>
-                    <group string="Book balances">
+                    <group string="Book balances" col="3">
                         <group string="Opening">
                             <field name="opening_kyats" string="Opening Kyats" readonly="1"/>
                             <field name="opening_sgd" string="Opening SGD" readonly="1"/>
