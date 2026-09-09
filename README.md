@@ -48,6 +48,12 @@ Kyat denominations are defined as constants in the model file, from 10,000 down 
 ### Reports
 - QWeb report action and template in `report/` directory
 
+### Accounting currency handling
+When loading posted accounting lines, the move line transaction currency takes
+precedence over the journal/company currency for supported SGD, THB, and USD
+slots. Foreign-currency lines use `amount_currency`; company-currency lines use
+the company balance. Unsupported currencies retain the Kyats fallback.
+
 ### Data
 - IR sequence for auto-numbering registers (`data/ir_sequence.xml`)
 

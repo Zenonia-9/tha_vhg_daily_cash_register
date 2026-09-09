@@ -314,6 +314,21 @@ class VhgDailyCashRegister(models.Model):
             return "kyats"
         return CURRENCY_CODE_SLOT.get(currency.name, "kyats")
 
+    def _slot_for_aml(self, aml):
+        """Return the register slot for an accounting line.
+
+        A move line can carry a transaction currency that differs from the
+        journal/company currency, such as a USD payment posted by an MMK cash
+        journal. That transaction currency must take precedence.
+        """
+        journal = aml.journal_id
+        if journal.cash_register_currency_slot:
+            return journal.cash_register_currency_slot
+        currency = aml.currency_id or journal.currency_id or journal.company_id.currency_id
+        if currency == journal.company_id.currency_id:
+            return "kyats"
+        return CURRENCY_CODE_SLOT.get(currency.name, "kyats")
+
     def _cash_account_ids(self, journals):
         """Collect all cash-type accounts tied to the selected journals.
 
@@ -360,10 +375,10 @@ class VhgDailyCashRegister(models.Model):
     def _line_vals_from_aml(self, aml, line_type, sequence):
         """Build the One2many command values for a single register line.
 
-        Routes the amount into the slot that matches the journal's currency,
-        so multi-currency journals keep their figures separated.
+        Routes the amount into the slot that matches the transaction currency,
+        so foreign transactions on company-currency journals stay separated.
         """
-        slot = self._slot_for_journal(aml.journal_id)
+        slot = self._slot_for_aml(aml)
         vals = {
             "line_type": line_type,
             "sequence": sequence,
@@ -414,7 +429,7 @@ class VhgDailyCashRegister(models.Model):
         openings = {"kyats": 0.0, "sgd": 0.0, "baht": 0.0, "usd": 0.0}
         opening_lines = Line.search(base_domain + [("date", "<", self.date)])
         for aml in opening_lines:
-            slot = self._slot_for_journal(aml.journal_id)
+            slot = self._slot_for_aml(aml)
             openings[slot] += aml.balance if slot == "kyats" else aml.amount_currency
 
         # Today: classify each line as receipt (positive) or payment (negative).
