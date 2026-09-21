@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 {
     "name": "VHG Daily Cash Register",
-    "summary": "Daily cash register from cash journals with denomination count and QWeb print.",
-    "version": "19.0.1.3.0",
+    "summary": "Daily cash register from Chart of Accounts liquidity accounts with denomination count and QWeb print.",
+    "version": "19.0.1.4.1",
     "category": "Accounting/Accounting",
     "author": "Thein Htoo Aung",
     "license": "LGPL-3",
@@ -17,6 +17,8 @@
         "views/account_move_views.xml",
         "views/res_config_settings_views.xml",
     ],
+    "pre_init_hook": "pre_init_hook",
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": False,
 }

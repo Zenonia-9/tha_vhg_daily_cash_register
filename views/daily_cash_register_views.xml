@@ -41,7 +41,7 @@
                     <group>
                         <group>
                             <field name="date" readonly="state != 'draft'"/>
-                            <field name="journal_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                            <field name="account_ids" widget="many2many_tags" readonly="state != 'draft'"/>
                         </group>
                         <group>
                             <field name="company_id" groups="base.group_multi_company"/>

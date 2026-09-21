@@ -50,14 +50,17 @@ class VhgDailyCashRegister(models.Model):
     )
     # Company currency drives Kyat (base) columns throughout the form/report.
     currency_id = fields.Many2one(related="company_id.currency_id")
-    journal_ids = fields.Many2many(
-        "account.journal",
-        "vhg_dcr_journal_rel",
+    account_ids = fields.Many2many(
+        "account.account",
+        "vhg_dcr_account_rel",
         "register_id",
-        "journal_id",
-        string="Cash Journals",
+        "account_id",
+        string="Cash Accounts",
         required=True,
-        domain="[('company_id', '=', company_id), ('type', 'in', ('cash', 'bank'))]",
+        domain="[('account_type', 'in', ('asset_cash', 'asset_bank')), "
+        "('company_ids', 'in', company_id)]",
+        help="Chart of Accounts liquidity accounts to load. Posted items on "
+        "these accounts are included regardless of journal.",
     )
     state = fields.Selection(
         [
@@ -168,8 +171,8 @@ class VhgDailyCashRegister(models.Model):
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
         company = self.env["res.company"].browse(res.get("company_id")) or self.env.company
-        if "journal_ids" in fields_list and company.cash_register_journal_ids:
-            res["journal_ids"] = [(6, 0, company.cash_register_journal_ids.ids)]
+        if "account_ids" in fields_list and company.cash_register_account_ids:
+            res["account_ids"] = [(6, 0, company.cash_register_account_ids.ids)]
         return res
 
     # -------------------------------------------------------------------------
@@ -301,49 +304,45 @@ class VhgDailyCashRegister(models.Model):
     # -------------------------------------------------------------------------
     # Loading helpers
     # -------------------------------------------------------------------------
-    def _slot_for_journal(self, journal):
-        """Return which currency slot a journal posts into.
+    def _slot_for_account(self, account):
+        """Return which currency slot an account posts into.
 
-        Honours a manual override on the journal; otherwise derives from the
-        journal's currency (or company currency → Kyats).
+        Honours a manual override on the account; otherwise derives from the
+        account's currency (or company currency → Kyats).
         """
-        if journal.cash_register_currency_slot:
-            return journal.cash_register_currency_slot
-        currency = journal.currency_id or journal.company_id.currency_id
-        if currency == journal.company_id.currency_id:
+        if account.cash_register_currency_slot:
+            return account.cash_register_currency_slot
+        company = self.company_id or self.env.company
+        currency = account.currency_id or company.currency_id
+        if currency == company.currency_id:
             return "kyats"
         return CURRENCY_CODE_SLOT.get(currency.name, "kyats")
 
     def _slot_for_aml(self, aml):
         """Return the register slot for an accounting line.
 
-        A move line can carry a transaction currency that differs from the
-        journal/company currency, such as a USD payment posted by an MMK cash
-        journal. That transaction currency must take precedence.
+        Priority:
+        1. Manual column on the cash account
+        2. Manual column on the journal (legacy override)
+        3. AML transaction currency (USD payment on an MMK cash account)
+        4. Account / journal / company currency → Kyats fallback
         """
+        account = aml.account_id
+        if account.cash_register_currency_slot:
+            return account.cash_register_currency_slot
         journal = aml.journal_id
         if journal.cash_register_currency_slot:
             return journal.cash_register_currency_slot
-        currency = aml.currency_id or journal.currency_id or journal.company_id.currency_id
-        if currency == journal.company_id.currency_id:
+        company = aml.company_id or journal.company_id or self.company_id
+        currency = (
+            aml.currency_id
+            or account.currency_id
+            or journal.currency_id
+            or company.currency_id
+        )
+        if currency == company.currency_id:
             return "kyats"
         return CURRENCY_CODE_SLOT.get(currency.name, "kyats")
-
-    def _cash_account_ids(self, journals):
-        """Collect all cash-type accounts tied to the selected journals.
-
-        Includes both the journal defaults and any extra asset_cash accounts
-        on the same company, so postings on alternative cash accounts still
-        appear in the register.
-        """
-        accounts = journals.mapped("default_account_id")
-        extra = self.env["account.account"].search(
-            [
-                ("company_ids", "in", [self.company_id.id]),
-                ("account_type", "=", "asset_cash"),
-            ]
-        )
-        return accounts | extra
 
     def _dept_from_aml(self, aml):
         """Resolve the Department label from analytic distribution on a line.
@@ -401,28 +400,28 @@ class VhgDailyCashRegister(models.Model):
         return vals
 
     def action_load_accounting(self):
-        """Populate the register from posted journal items.
+        """Populate the register from posted items on the selected accounts.
 
         Splits lines into receipts (positive movement) vs. payments, computes
         the opening balance as the cumulative position before `date`, and
-        seeds the denomination rows if not yet present.
+        seeds the denomination rows if not yet present. Journal is ignored;
+        only the Chart of Accounts selection is used.
         """
         self.ensure_one()
         if self.state != "draft":
             raise UserError(_("Only draft registers can be reloaded."))
-        if not self.journal_ids:
-            raise UserError(_("Select the cash journals first."))
+        if not self.account_ids:
+            raise UserError(_("Select the cash accounts first."))
 
         Line = self.env["account.move.line"]
-        cash_accounts = self._cash_account_ids(self.journal_ids)
+        cash_accounts = self.account_ids
         if not cash_accounts:
-            raise UserError(_("No cash accounts found on the selected journals."))
+            raise UserError(_("No cash accounts selected."))
 
         base_domain = [
             ("company_id", "=", self.company_id.id),
             ("parent_state", "=", "posted"),
             ("account_id", "in", cash_accounts.ids),
-            ("journal_id", "in", self.journal_ids.ids),
         ]
 
         # Opening: sum of all cash movements strictly before `date`.

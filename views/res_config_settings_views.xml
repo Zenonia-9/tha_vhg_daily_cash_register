@@ -7,8 +7,8 @@
         <field name="arch" type="xml">
             <xpath expr="//app[@name='account']" position="inside">
                 <block title="Daily Cash Register" name="vhg_daily_cash_register_settings">
-                    <setting string="Cash Journals" help="Journals loaded onto each new Daily Cash Register. Use a separate journal per currency.">
-                        <field name="cash_register_journal_ids" widget="many2many_tags"/>
+                    <setting string="Cash Accounts" help="Chart of Accounts liquidity accounts loaded onto each new Daily Cash Register. Posted items on these accounts are included regardless of journal.">
+                        <field name="cash_register_account_ids" widget="many2many_tags"/>
                     </setting>
                     <setting string="Dept Analytic Plan" help="Leave empty to take any analytic account on the cash line as Dept.">
                         <field name="cash_register_analytic_plan_id"/>

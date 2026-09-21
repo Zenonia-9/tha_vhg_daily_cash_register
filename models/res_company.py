@@ -6,15 +6,17 @@ from odoo import fields, models
 class ResCompany(models.Model):
     _inherit = "res.company"
 
-    cash_register_journal_ids = fields.Many2many(
-        "account.journal",
-        "company_cash_register_journal_rel",
+    cash_register_account_ids = fields.Many2many(
+        "account.account",
+        "company_cash_register_account_rel",
         "company_id",
-        "journal_id",
-        string="Daily Cash Journals",
-        domain="[('company_id', '=', id), ('type', 'in', ('cash', 'bank'))]",
-        help="Cash journals included on the Daily Cash Register. "
-        "Use one journal per currency (Kyats, SGD, Baht, USD).",
+        "account_id",
+        string="Daily Cash Accounts",
+        domain="[('account_type', 'in', ('asset_cash', 'asset_bank')), "
+        "('company_ids', 'in', id)]",
+        help="Chart of Accounts liquidity accounts included on the Daily Cash "
+        "Register. Load from Accounting uses posted items on these accounts "
+        "only, regardless of journal.",
     )
     cash_register_analytic_plan_id = fields.Many2one(
         "account.analytic.plan",

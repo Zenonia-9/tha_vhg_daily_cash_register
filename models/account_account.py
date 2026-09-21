@@ -3,8 +3,8 @@
 from odoo import fields, models
 
 
-class AccountJournal(models.Model):
-    _inherit = "account.journal"
+class AccountAccount(models.Model):
+    _inherit = "account.account"
 
     cash_register_currency_slot = fields.Selection(
         [
@@ -14,6 +14,6 @@ class AccountJournal(models.Model):
             ("usd", "USD"),
         ],
         string="Cash Register Column",
-        help="Fallback column when the cash account has no Cash Register Column. "
-        "If both are empty, company currency → Kyats, SGD/THB/USD by currency code.",
+        help="Which printed column this account fills. "
+        "If empty, company currency → Kyats, SGD/THB/USD by currency code.",
     )

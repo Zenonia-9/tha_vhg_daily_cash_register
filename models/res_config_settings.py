@@ -6,8 +6,8 @@ from odoo import fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
-    cash_register_journal_ids = fields.Many2many(
-        related="company_id.cash_register_journal_ids",
+    cash_register_account_ids = fields.Many2many(
+        related="company_id.cash_register_account_ids",
         readonly=False,
     )
     cash_register_analytic_plan_id = fields.Many2one(
