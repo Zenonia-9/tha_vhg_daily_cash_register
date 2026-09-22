@@ -2,7 +2,7 @@
 {
     "name": "VHG Daily Cash Register",
     "summary": "Daily cash register from Chart of Accounts liquidity accounts with denomination count and QWeb print.",
-    "version": "19.0.1.4.1",
+    "version": "19.0.1.4.2",
     "category": "Accounting/Accounting",
     "author": "Thein Htoo Aung",
     "license": "LGPL-3",

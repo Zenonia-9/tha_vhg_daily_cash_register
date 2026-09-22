@@ -27,8 +27,7 @@ docker exec odoo_19 odoo -d THA -u tha_vhg_daily_cash_register --stop-after-init
 
 ## Configuration
 - Select cash/bank accounts under Accounting > Configuration > Settings > Daily Cash Register
-- Optional column override: Accounting > Configuration > Chart of Accounts > Cash Register Column
-- Journal Cash Register Column remains a fallback if the account has no override
+- Optional column override remains on the journal: Accounting > Configuration > Journals > Cash Register Column
 
 ## Usage
 1. Navigate to the Daily Cash Register menu
@@ -41,7 +40,7 @@ docker exec odoo_19 odoo -d THA -u tha_vhg_daily_cash_register --stop-after-init
 ### Models
 - `vhg.daily.cash.register` — main register document (inherits `mail.thread`, `mail.activity.mixin`)
 - `vhg.daily.cash.register.line` — individual receipt/payment lines
-- Extends `account.move.line`, `account.account`, `account.journal`, `res.company`, and `res.config.settings`
+- Extends `account.move.line`, `account.journal`, `res.company`, and `res.config.settings`
 
 ### Denomination Structure
 Kyat denominations are defined as constants in the model file, from 10,000 down to 1, plus a "small note" row for loose change. USD is tracked numerically without physical note-count columns.
@@ -52,10 +51,10 @@ Kyat denominations are defined as constants in the model file, from 10,000 down 
 ### Accounting currency handling
 Load from Accounting filters posted `account.move.line` records by the selected
 cash/bank accounts (`account_ids`), not by journal. Column routing priority:
-account Cash Register Column, then journal Cash Register Column, then the move
-line transaction currency, then account/journal/company currency. Foreign-currency
-lines use `amount_currency`; company-currency lines use the company balance.
-Unsupported currencies retain the Kyats fallback.
+journal Cash Register Column, then the move line transaction currency, then
+account/journal/company currency. Foreign-currency lines use `amount_currency`;
+company-currency lines use the company balance. Unsupported currencies retain
+the Kyats fallback.
 
 On upgrade from 19.0.1.3.0, selected journals are mapped to their default
 accounts so existing Settings and draft registers keep a working CoA selection.

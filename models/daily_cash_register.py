@@ -307,11 +307,8 @@ class VhgDailyCashRegister(models.Model):
     def _slot_for_account(self, account):
         """Return which currency slot an account posts into.
 
-        Honours a manual override on the account; otherwise derives from the
-        account's currency (or company currency → Kyats).
+        Derives from the account's currency (or company currency → Kyats).
         """
-        if account.cash_register_currency_slot:
-            return account.cash_register_currency_slot
         company = self.company_id or self.env.company
         currency = account.currency_id or company.currency_id
         if currency == company.currency_id:
@@ -322,14 +319,11 @@ class VhgDailyCashRegister(models.Model):
         """Return the register slot for an accounting line.
 
         Priority:
-        1. Manual column on the cash account
-        2. Manual column on the journal (legacy override)
-        3. AML transaction currency (USD payment on an MMK cash account)
-        4. Account / journal / company currency → Kyats fallback
+        1. Manual column on the journal (optional override)
+        2. AML transaction currency (USD payment on an MMK cash account)
+        3. Account / journal / company currency → Kyats fallback
         """
         account = aml.account_id
-        if account.cash_register_currency_slot:
-            return account.cash_register_currency_slot
         journal = aml.journal_id
         if journal.cash_register_currency_slot:
             return journal.cash_register_currency_slot

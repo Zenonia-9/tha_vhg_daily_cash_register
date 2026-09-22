@@ -50,25 +50,3 @@ class TestDailyCashRegisterCurrency(TransactionCase):
 
         self.assertEqual(values["amount_kyats"], 420000.0)
         self.assertEqual(values["amount_usd"], 0.0)
-
-    def test_account_column_override_precedes_transaction_currency(self):
-        self.assertTrue(self.journal)
-        self.assertTrue(self.usd)
-        account = self.env["account.account"].new(
-            {"cash_register_currency_slot": "kyats"}
-        )
-        register = self.register_model.new({"company_id": self.company.id})
-        aml = self.env["account.move.line"].new(
-            {
-                "journal_id": self.journal.id,
-                "currency_id": self.usd.id,
-                "amount_currency": 100.0,
-                "balance": 420000.0,
-            }
-        )
-        aml.account_id = account
-
-        values = register._line_vals_from_aml(aml, "receipt", 1)
-
-        self.assertEqual(values["amount_kyats"], 420000.0)
-        self.assertEqual(values["amount_usd"], 0.0)
