@@ -54,7 +54,13 @@
                             padding: 2px 4px;
                             vertical-align: middle;
                         }
-                        table.dcr-table th { text-align: center; font-weight: bold; }
+                        table.dcr-table th {
+                            text-align: center;
+                            font-weight: bold;
+                            background: #ffff00;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
                         table.dcr-table td.dept { text-align: center; vertical-align: middle; }
                         .num { text-align: right; white-space: nowrap; }
                         .ctr { text-align: center; vertical-align: middle; }
@@ -72,6 +78,18 @@
                         .dcr-checked { margin: 4px 0 0 8px; }
                         .dcr-hl {
                             background: #cfcfcf;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
+                        .dcr-balance {
+                            background: #9bc2e6;
+                            font-weight: bold;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
+                        .dcr-section-total {
+                            background: #f4b183;
+                            font-weight: bold;
                             -webkit-print-color-adjust: exact;
                             print-color-adjust: exact;
                         }
@@ -125,7 +143,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="bold">
+                                <tr class="dcr-balance">
                                     <td/>
                                     <td/>
                                     <td class="mid">Opening Cash balance</td>
@@ -169,7 +187,7 @@
                                     </td>
                                 </tr>
 
-                                <tr class="bold">
+                                <tr class="dcr-section-total">
                                     <td/>
                                     <td/>
                                     <td class="mid">Total Cash Receipt</td>
@@ -222,7 +240,7 @@
                                     </td>
                                 </tr>
 
-                                <tr class="bold">
+                                <tr class="dcr-section-total">
                                     <td/>
                                     <td/>
                                     <td class="mid">Total Cash Payment</td>
@@ -248,7 +266,7 @@
                                         <t t-else="">-</t>
                                     </td>
                                 </tr>
-                                <tr class="bold">
+                                <tr class="dcr-balance">
                                     <td/>
                                     <td/>
                                     <td class="mid">Closing Cash balance</td>

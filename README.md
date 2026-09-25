@@ -10,7 +10,8 @@ Provides a daily cash register for tracking cash balances from selected Chart of
 - Separate receipt and payment line types
 - Draft / Confirmed workflow with state tracking
 - Auto-generated sequence numbers per register
-- QWeb PDF report for printing the daily cash register
+- QWeb PDF report for printing the daily cash register (Victoria colours)
+- Coloured Excel print matching the paper register (yellow header, blue opening/closing, orange section totals)
 - Extends account move lines, accounts, and journal configuration for cash register integration
 - Configurable settings via `res.config.settings`
 - Chatter integration (mail thread and activities)
@@ -34,7 +35,7 @@ docker exec odoo_19 odoo -d THA -u tha_vhg_daily_cash_register --stop-after-init
 2. Create a new register, select the date and cash accounts
 3. Enter denomination counts and foreign currency amounts
 4. Confirm the register when complete
-5. Print the QWeb report for physical reconciliation
+5. Print PDF or Print Excel for physical reconciliation. Excel uses the same columns and Victoria colours as the paper register.
 
 ## Technical Details
 ### Models
@@ -47,6 +48,7 @@ Kyat denominations are defined as constants in the model file, from 10,000 down 
 
 ### Reports
 - QWeb report action and template in `report/` directory
+- Excel workbook from `action_print_excel` (`models/daily_cash_register_xlsx.py`), built with xlsxwriter (Odoo core dependency). No extra module required.
 
 ### Accounting currency handling
 Load from Accounting filters posted `account.move.line` records by the selected
