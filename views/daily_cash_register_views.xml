@@ -100,10 +100,10 @@
                         </page>
                         <page string="Denominations" name="denoms">
                             <div class="mb-2">
-                                Enter physical note counts. Amount for 10,000–1 is face × Qty. Small note is a free amount.
+                                Enter physical note counts. Amount is face value × Qty.
                                 <button name="action_reset_denominations" type="object" string="Reset rows" class="btn-link" invisible="state != 'draft'"/>
                             </div>
-                            <field name="denom_line_ids" readonly="state != 'draft'">
+                            <field name="denom_line_ids" domain="[('code', '!=', 'small')]" readonly="state != 'draft'">
                                 <list editable="bottom" create="false" delete="false">
                                     <field name="sequence" column_invisible="1"/>
                                     <field name="code" column_invisible="1"/>
