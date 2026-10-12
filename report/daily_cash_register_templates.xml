@@ -164,7 +164,7 @@
                                 <tr t-foreach="doc.receipt_line_ids" t-as="line">
                                     <td class="ctr"><t t-esc="line.sequence"/></td>
                                     <td class="dept"><t t-esc="line.dept"/></td>
-                                    <td><t t-esc="line.particulars"/></td>
+                                    <td><t t-esc="line._report_particulars()"/></td>
                                     <td class="num">
                                         <t t-if="line.amount_kyats">
                                             <span t-field="line.amount_kyats" t-options="{'widget': 'float', 'precision': 0}"/>
@@ -217,7 +217,7 @@
                                 <tr t-foreach="doc.payment_line_ids" t-as="line">
                                     <td class="ctr"><t t-esc="line.sequence"/></td>
                                     <td class="dept"><t t-esc="line.dept"/></td>
-                                    <td><t t-esc="line.particulars"/></td>
+                                    <td><t t-esc="line._report_particulars()"/></td>
                                     <td class="num">
                                         <t t-if="line.amount_kyats">
                                             <span t-field="line.amount_kyats" t-options="{'widget': 'float', 'precision': 0}"/>
@@ -304,15 +304,15 @@
                                 <div t-att-style="cbase + 'width:12%;text-align:right;'">Qty</div>
                                 <div t-att-style="cbase + 'width:12%;text-align:right;'">Qty</div>
                             </div>
-                            <t t-foreach="doc.denom_line_ids" t-as="dline">
+                            <t t-foreach="doc._report_denom_lines()" t-as="dline">
                                 <div style="width:100%;overflow:hidden;border:0;">
                                     <div t-att-style="cbase + 'width:8%;text-align:center;'">
-                                        <t t-esc="dline.sequence"/>
+                                        <t t-esc="dline_index + 1"/>
                                     </div>
                                     <div t-att-style="cbase + 'width:22%;text-align:right;'">
                                         <t t-esc="dline.name"/>
                                     </div>
-                                    <div t-att-style="cbase + 'width:22%;text-align:right;' + ('background:#cfcfcf;-webkit-print-color-adjust:exact;' if dline.code == 'small' else '')">
+                                    <div t-att-style="cbase + 'width:22%;text-align:right;'">
                                         <t t-if="dline.amount">
                                             <span t-field="dline.amount" t-options="{'widget': 'float', 'precision': 0}"/>
                                         </t>

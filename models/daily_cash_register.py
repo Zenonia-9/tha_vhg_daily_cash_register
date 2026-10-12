@@ -4,9 +4,8 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 # Kyat note denominations. Order is from largest to smallest.
-# ("code", "label", face_value). "small" is a free-form "loose change" row.
+# ("code", "label", face_value).
 DENOM_ROWS = [
-    ("small", "Small note", 0.0),
     ("10000", "10,000", 10000.0),
     ("5000", "5,000", 5000.0),
     ("1000", "1,000", 1000.0),
@@ -359,11 +358,15 @@ class VhgDailyCashRegister(models.Model):
         return ", ".join(accounts.mapped("name"))
 
     def _particulars_from_aml(self, aml):
-        """Prefer the manual cash-register particulars; fall back to AML label."""
+        """Prefer manual particulars, then the reference, then the AML label."""
         if aml.cash_register_particulars:
             return aml.cash_register_particulars
-        parts = [aml.move_id.ref, aml.name]
-        return " - ".join(part for part in parts if part)
+        return aml.move_id.ref or aml.name or ""
+
+    def _report_denom_lines(self):
+        """Omit the retired loose-change row without deleting historical counts."""
+        self.ensure_one()
+        return self.denom_line_ids.filtered(lambda line: line.code != "small")
 
     def _line_vals_from_aml(self, aml, line_type, sequence):
         """Build the One2many command values for a single register line.
@@ -514,6 +517,16 @@ class VhgDailyCashRegisterLine(models.Model):
     amount_usd = fields.Float(string="Amount USD", digits=(16, 2))
     move_line_id = fields.Many2one("account.move.line", ondelete="set null")
     analytic_account_names = fields.Char(string="Analytic")
+
+    def _report_particulars(self):
+        """Normalize previously loaded labels while preserving edited particulars."""
+        self.ensure_one()
+        aml = self.move_line_id
+        if aml and not aml.cash_register_particulars:
+            legacy = " - ".join(part for part in [aml.move_id.ref, aml.name] if part)
+            if self.particulars == legacy:
+                return self.register_id._particulars_from_aml(aml)
+        return self.particulars or ""
 
 
 class VhgDailyCashRegisterDenom(models.Model):

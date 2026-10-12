@@ -267,9 +267,9 @@ class VhgDailyCashRegisterXlsx(models.Model):
         for col, label in enumerate(denom_headers):
             sheet.write(row, col, label, formats["denom_header"])
         row += 1
-        for dline in self.denom_line_ids:
-            amount_fmt = formats["denom_hl"] if dline.code == "small" else formats["denom_num"]
-            sheet.write(row, 0, dline.sequence or "", formats["denom_label"])
+        for index, dline in enumerate(self._report_denom_lines(), start=1):
+            amount_fmt = formats["denom_num"]
+            sheet.write(row, 0, index, formats["denom_label"])
             sheet.write(row, 1, dline.name or "", formats["denom_label"])
             if dline.amount:
                 sheet.write_number(row, 2, dline.amount, amount_fmt)
@@ -290,10 +290,25 @@ class VhgDailyCashRegisterXlsx(models.Model):
         row += 2
         sheet.write(row, 0, "Checked", formats["sign"])
         row += 2
-        sheet.set_row(row, 48)
-        sheet.write(row, 0, "Confirmed by;\n\nOther Department", formats["sign"])
-        sheet.write(row, 2, "Checked By;\n\nDCA/ACA", formats["sign"])
-        sheet.write(row, 4, "Prepared by:\n\nChief Cashier/Asst; Chief Cashier", formats["sign"])
+        sheet.set_row(row, 66)
+        # Equal-width blocks match the PDF independently of the table columns.
+        signature_width = (47 + 159 + 509 + 117 + 3 * 82) // 3
+        for index, text in enumerate([
+            "Confirmed by;\n\n\nOther Department",
+            "Checked By;\n\n\nDCA/ACA",
+            "Prepared by:\n\n\nChief Cashier/Asst; Chief Cashier",
+        ]):
+            sheet.insert_textbox(row, 0, text, {
+                "x_offset": index * signature_width,
+                "width": signature_width,
+                "height": 84,
+                "font": {"name": "Arial", "size": 11, "bold": True},
+                "align": {"vertical": "top"},
+                "margin": 0,
+                "line": {"none": True},
+                "fill": {"none": True},
+                "object_position": 1,
+            })
         sheet.print_area(0, 0, row, 6)
         return row
 
@@ -323,7 +338,7 @@ class VhgDailyCashRegisterXlsx(models.Model):
 
     def _xlsx_write_lines(self, sheet, formats, row, lines):
         for line in lines:
-            particulars = line.particulars or ""
+            particulars = line._report_particulars()
             extra = max(0, particulars.count("\n"))
             height = 16 + extra * 12
             if len(particulars) > 80:
